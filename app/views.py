@@ -160,6 +160,14 @@ def resources_directory(request):
         
       }
       
+      # Filter out empty/invalid resources - must have at least a name or URL
+      resource_name = processed_resource['resource_name'].strip() if processed_resource['resource_name'] else ''
+      resource_url = processed_resource['resource_url'].strip() if processed_resource['resource_url'] else ''
+      
+      # Skip this resource if it has no name and no URL
+      if not resource_name and not resource_url:
+        continue
+      
       # Split languages into lists if they contain commas
       languages = processed_resource['languages_raw']
       if languages and isinstance(languages, str):
