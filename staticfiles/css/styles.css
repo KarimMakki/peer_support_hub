@@ -1,0 +1,20 @@
+:root {
+            font-family: 'Inter', sans-serif;
+        }
+        .peer-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #ffffff;
+            border-bottom: 4px solid #f97316; 
+        }
+        .peer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.15), 0 6px 10px -3px rgba(0, 0, 0, 0.08);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
+        }
+
