@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Center - PeerSupport Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+<body class="bg-gray-50 min-h-screen antialiased">
+
+    <!-- Header and Primary Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex flex-col">
+                <h1 class="text-3xl font-extrabold text-gray-900 flex items-center">
+                    PeerSupport Hub
+                </h1>
+                <p class="text-xs text-gray-500 mt-1">Empowering peer mentorship at MIT.</p>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex space-x-4 items-center">
+                <a href="/"
+                    class="px-3 py-2 text-sm font-medium rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-gray-100 transition duration-150">Hub</a>
+                <a href="/resources/"
+                    class="px-3 py-2 text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition duration-150">Resource
+                    Center</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- Page Header -->
+        <div class="mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-4 flex items-center">
+                <svg class="w-8 h-8 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253">
+                    </path>
+                </svg>
+                Skillshare Resource Center
+            </h2>
+            <p class="text-lg text-gray-700">Access curated learning paths, external resources, and useful tooling
+                suggested by the MIT community.</p>
+        </div>
+
+        <!-- Search and Filter Controls -->
+        <div class="mb-10 p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
+            <p class="text-lg text-gray-700 font-medium mb-4">Find resources:</p>
+            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+                <input type="text" id="searchInput" onkeyup="filterResources()"
+                    placeholder="Search by title, author, description, or language (e.g., Python, JavaScript)"
+                    class="flex-grow p-4 border border-gray-300 rounded-xl shadow-inner focus:ring-indigo-500 focus:border-indigo-500 text-base transition duration-200">
+            </div>
+        </div>
+
+        <!-- Resource Card Grid -->
+        <div id="resource-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% if resources %}
+            {% for resource in resources %}
+            <div class="resource-card bg-white rounded-2xl shadow-xl p-6 flex flex-col hover:shadow-2xl transition duration-300"
+                data-search="{{ resource.resource_name|default:'' }} {{ resource.author|default:'' }} {{ resource.description|default:'' }} {{ resource.languages_raw|default:'' }}">
+
+                <!-- Resource Header -->
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                        {{ resource.resource_name|default:"Untitled Resource" }}
+                    </h3>
+                    {% if resource.author %}
+                    <p class="text-sm text-gray-600 flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span class="font-medium">{{ resource.author }}</span>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                {% if resource.description %}
+                <div class="mb-4 flex-grow">
+                    <p class="text-sm text-gray-700 line-clamp-3">{{ resource.description }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Languages -->
+                {% if resource.languages_list %}
+                <div class="mb-4">
+                    <p class="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Languages</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for language in resource.languages_list %}
+                        <span
+                            class="bg-green-50 text-green-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">
+                            {{ language }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% elif resource.languages_raw %}
+                <div class="mb-4">
+                    <p class="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Languages</p>
+                    <span
+                        class="bg-green-50 text-green-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">
+                        {{ resource.languages_raw }}
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Resource Link -->
+                {% if resource.resource_url %}
+                <div class="mt-auto pt-4 border-t border-gray-200">
+                    <a href="{{ resource.resource_url }}" target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center w-full justify-center py-3 px-4 text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition duration-150">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
+                        View Resource
+                    </a>
+                </div>
+                {% else %}
+                <div class="mt-auto pt-4 border-t border-gray-200">
+                    <span
+                        class="inline-flex items-center w-full justify-center py-3 px-4 text-sm font-medium rounded-xl text-gray-400 bg-gray-100 cursor-not-allowed">
+                        No URL Available
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-span-full text-center py-12">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253">
+                    </path>
+                </svg>
+                <p class="text-lg text-gray-500">No resources found.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </main>
+
+    <script src="{% static 'js/resources.js' %}"></script>
+</body>
+
+</html>
