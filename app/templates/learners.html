@@ -103,16 +103,28 @@
                 {% if learners %}
                 {% for learner in learners %}
                 <div class="peer-card rounded-2xl shadow-xl p-6 flex flex-col cursor-pointer"
+                    data-name="{{ learner.name|default:'Anonymous' }}"
                     data-email="{{ learner.contact_email|default:'' }}"
-                    data-search="{{ learner.name|default:'' }} {{ learner.contact_email|default:'' }} {{ learner.skills_to_teach_raw|default:'' }} {{ learner.skills_to_learn_raw|default:'' }}">
+                    data-timezone="{{ learner.timezone|default:'' }}"
+                    data-availability="{{ learner.best_times_est|default:'' }}"
+                    data-kudos-count="{{ learner.kudos_count|default:0 }}"
+                    data-skills-offer="{% if learner.skills_to_teach_list %}{{ learner.skills_to_teach_list|join:'||' }}{% else %}{{ learner.skills_to_teach_raw|default:'' }}{% endif %}"
+                    data-skills-learn="{% if learner.skills_to_learn_list %}{{ learner.skills_to_learn_list|join:'||' }}{% else %}{{ learner.skills_to_learn_raw|default:'' }}{% endif %}"
+                    data-search="{{ learner.name|default:'' }} {{ learner.contact_email|default:'' }} {{ learner.skills_to_teach_raw|default:'' }} {{ learner.skills_to_learn_raw|default:'' }}"
+                    data-kudos-reasons="{% if learner.kudos_reasons %}{% for reason in learner.kudos_reasons %}{% if not forloop.first %}||{% endif %}{{ reason|escape }}{% endfor %}{% endif %}">
                     <!-- Avatar and Header -->
-                    <div class="flex items-start space-x-4 mb-4">
+                    <div class="flex items-center space-x-4 mb-4">
                         <img src="https://api.dicebear.com/8.x/bottts/svg?seed={{ learner.contact_email|default:''|lower|urlencode }}&size=64"
                             alt="{{ learner.name|default:'Anonymous' }} Avatar"
                             class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-4 border-indigo-200 shadow-inner bg-white object-cover">
                         <div class="min-w-0 flex-1">
-                            <h2 class="text-xl font-bold text-gray-900 break-words">
+                            <h2 class="text-xl font-bold text-gray-900 break-words flex items-center">
                                 {{ learner.name|default:"Anonymous" }}
+                                {% if learner.kudos_count|default:0 >= 50 %}
+                                <span title="Gold Helper (50+ Kudos)" class="text-yellow-500 ml-2 text-xl">🏆</span>
+                                {% elif learner.kudos_count|default:0 >= 15 %}
+                                <span title="Bronze Helper &amp; Reviewer" class="text-orange-500 ml-2 text-xl">✨</span>
+                                {% endif %}
                             </h2>
                             {% if learner.contact_email %}
                             <p class="text-xs text-gray-500 truncate">{{ learner.contact_email }}</p>
@@ -126,13 +138,13 @@
                         <p class="text-sm font-semibold text-gray-700 mb-2">Top Skills I Offer:</p>
                         <div class="flex flex-wrap gap-2 hide-scrollbar overflow-x-auto">
                             {% if learner.skills_to_teach_list %}
-                            {% for skill in learner.skills_to_teach_list %}
+                            {% for skill in learner.skills_to_teach_list|slice:":3" %}
                             <span
                                 class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{skill}}</span>
                             {% endfor %}
                             {% else %}
                             <span
-                                class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{learner.skills_to_teach_raw}}</span>
+                                class="bg-green-50 text-green-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{learner.skills_to_teach_raw}}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -140,17 +152,16 @@
 
                     {% if learner.skills_to_learn_list or learner.skills_to_learn_raw %}
                     <div class="mb-4">
-                        <p class="text-sm font-semibold text-gray-700 mb-2">Skills I Want to Learn:</p>
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Skills I'm Focused On:</p>
                         <div class="flex flex-wrap gap-2 hide-scrollbar overflow-x-auto">
                             {% if learner.skills_to_learn_list %}
-                            {% for skill in learner.skills_to_learn_list %}
+                            {% for skill in learner.skills_to_learn_list|slice:":3" %}
                             <span
                                 class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{skill}}</span>
                             {% endfor %}
                             {% else %}
                             <span
-                                class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{learner.skills_to_learn_raw
-                                }}</span>
+                                class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">{{learner.skills_to_learn_raw}}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -161,7 +172,7 @@
                         {% if learner.timezone or learner.best_times_est %}
                         <p>
                             {% if learner.timezone %}<strong>Time:</strong> {{ learner.timezone }}{% endif %}
-                            {% if learner.best_times_est %} | {{ learner.best_times_est }}{% endif %}
+                            {% if learner.best_times_est %}{% if learner.timezone %} | {%endif%}{{learner.best_times_est }}{% endif %}
                         </p>
                         {% endif %}
                         <p class="font-bold text-lg text-orange-500 flex items-center">
@@ -171,20 +182,19 @@
                     </div>
 
                     <!-- Interaction Buttons -->
+                    {% if learner.contact_email %}
                     <div class="mt-5 flex space-x-3">
-                        {% if learner.contact_email %}
-                        <a href="mailto:{% if learner.contact_email %}{{ learner.contact_email }}{% endif %}"
-                            class="flex-[1.5] text-center py-3 text-sm font-semibold rounded-xl text-indigo-600 border border-indigo-600 hover:bg-indigo-50 transition duration-150">
-                            Connect (Email)
+                        <a href="mailto:{{ learner.contact_email }}"
+                            class="flex-1 text-center py-3 text-sm font-semibold rounded-xl text-indigo-600 border border-indigo-600 hover:bg-indigo-50 transition duration-150">Connect
+                            (Email)
                         </a>
                         <button type="button"
                             class="give-kudos-btn flex-1 py-3 text-sm font-semibold rounded-xl text-white bg-orange-600 hover:bg-orange-700 shadow-md transition duration-150"
                             data-name="{{ learner.name|default:'Anonymous'|escapejs }}"
-                            data-email="{{ learner.contact_email|escapejs }}">
-                            Give Kudos
+                            data-email="{{ learner.contact_email|escapejs }}">Give Kudos
                         </button>
-                        {% endif %}
                     </div>
+                    {% endif %}
                 </div>
                 {% endfor %}
                 {% else %}
@@ -230,6 +240,64 @@
 
                 <p id="kudos-message" class="mt-4 p-3 rounded-lg text-sm font-semibold hidden"></p>
             </form>
+        </div>
+    </div>
+
+    <div id="profile-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all duration-300 scale-95"
+            id="profile-modal-content">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-3xl font-extrabold text-gray-900" id="profile-modal-name"></h3>
+                <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex items-center space-x-6 mb-6">
+                <img src="" alt="Peer Avatar" id="profile-modal-avatar"
+                    class="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-4 border-indigo-200 shadow-inner bg-white object-cover">
+                <div>
+                    <p class="text-md text-gray-600" id="profile-modal-email"></p>
+                    <p class="text-md text-gray-600" id="profile-modal-timezone"></p>
+                    <p class="text-md text-gray-600" id="profile-modal-availability"></p>
+                    <p class="font-bold text-2xl text-orange-500 flex items-center mt-2">
+                        <span class="mr-1 text-3xl">🔥</span> <span id="profile-modal-kudos-count"></span> Kudos Earned
+                    </p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <p class="text-lg font-bold text-gray-800 mb-3">Skills I Offer:</p>
+                <div id="profile-modal-skills-offer" class="flex flex-wrap gap-2 hide-scrollbar"></div>
+                <p id="profile-modal-no-skills-offer" class="text-gray-500 italic hidden">No skills listed yet.</p>
+            </div>
+
+            <div class="mb-6">
+                <p class="text-lg font-bold text-gray-800 mb-3">Skills I Want to Learn:</p>
+                <div id="profile-modal-skills-learn" class="flex flex-wrap gap-2 hide-scrollbar"></div>
+                <p id="profile-modal-no-skills-learn" class="text-gray-500 italic hidden">No learning goals listed
+                    yet.</p>
+            </div>
+
+            <div id="profile-modal-kudos-reasons-section" class="mt-8 border-t pt-6 border-gray-200">
+                <p class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Reasons for Kudos:
+                </p>
+                <ul id="profile-modal-kudos-reasons" class="list-disc list-inside text-gray-700 space-y-2 ml-4"></ul>
+                <p id="profile-modal-no-kudos-reasons" class="text-gray-500 italic hidden">No specific reasons provided
+                    yet.</p>
+            </div>
         </div>
     </div>
 
