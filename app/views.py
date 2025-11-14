@@ -71,8 +71,19 @@ def learners_directory(request):
         learner['kudos_count'] = kudos_view.total_count
       except KudosView.DoesNotExist:
         learner['kudos_count'] = 0
+      reasons = list(
+        KudosLog.objects.filter(
+          to_email__iexact=learner['contact_email'],
+        )
+        .exclude(reason__isnull=True)
+        .exclude(reason__exact='')
+        .order_by('-timestamp')
+        .values_list('reason', flat=True)
+      )
+      learner['kudos_reasons'] = reasons
     else:
       learner['kudos_count'] = 0
+      learner['kudos_reasons'] = []
   
   return render(request, 'learners.html', {'learners': learners})
 
