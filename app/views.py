@@ -68,7 +68,7 @@ def learners_directory(request):
     if learner.get('contact_email'):
       try:
         kudos_view = KudosView.objects.get(to_email=learner['contact_email'])
-        learner['kudos_count'] = kudos_view.total_count
+        learner['kudos_count'] = int(kudos_view.total_count) if kudos_view.total_count else 0
       except KudosView.DoesNotExist:
         learner['kudos_count'] = 0
       reasons = list(
@@ -84,6 +84,9 @@ def learners_directory(request):
     else:
       learner['kudos_count'] = 0
       learner['kudos_reasons'] = []
+  
+  # Sort learners by kudos count (descending - highest first)
+  learners.sort(key=lambda x: int(x.get('kudos_count', 0) or 0), reverse=True)
   
   return render(request, 'learners.html', {'learners': learners})
 
