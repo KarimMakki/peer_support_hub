@@ -120,9 +120,9 @@
                         <div class="min-w-0 flex-1">
                             <h2 class="text-xl font-bold text-gray-900 break-words flex items-center">
                                 {{ learner.name|default:"Anonymous" }}
-                                {% if learner.kudos_count|default:0 >= 50 %}
-                                <span title="Gold Helper (50+ Kudos)" class="text-yellow-500 ml-2 text-xl">🏆</span>
-                                {% elif learner.kudos_count|default:0 >= 15 %}
+                                {% if learner.kudos_count|default:0 >= 5 %}
+                                <span title="Gold Helper (3+ Kudos)" class="text-yellow-500 ml-2 text-xl">🏆</span>
+                                {% elif learner.kudos_count|default:0 >= 3 %}
                                 <span title="Bronze Helper &amp; Reviewer" class="text-orange-500 ml-2 text-xl">✨</span>
                                 {% endif %}
                             </h2>
@@ -177,7 +177,7 @@
                         {% endif %}
                         <p class="font-bold text-lg text-orange-500 flex items-center">
                             <span class="mr-1 text-2xl">🔥</span>
-                            <span class="kudos-count mr-2">{{ learner.kudos_count|default:0 }}</span>Kudos Earned
+                            <span class="kudos-count mr-2">{{ learner.kudos_count|default:0 }}</span> Kudos Earned
                         </p>
                     </div>
 
