@@ -13,6 +13,20 @@ function generateDiceBearUrl(email = '') {
 
 function parseDataList(value) {
     if (!value) return [];
+    if (value.includes('||')) {
+        return value.split('||').map((item) => item.trim()).filter(Boolean);
+    }
+    return value.split(/[,/]/).map((item) => item.trim()).filter(Boolean);
+}
+
+function parseKudosReason(value) {
+    if (!value) return [];
+    // Split on || delimiter to separate different kudos reasons
+    // This preserves commas within individual reasons (e.g., "Great work, keep it up!")
+    if (value.includes('||')) {
+        return value.split('||').map((item) => item.trim()).filter(Boolean);
+    }
+    // If no || delimiter, return as single item (preserves commas in the reason)
     return [value.trim()].filter(Boolean);
 }
 
@@ -55,7 +69,7 @@ function openProfileModal(card) {
     const kudosCount = card.dataset.kudosCount || '0';
     const skillsOffer = parseDataList(card.dataset.skillsOffer || '');
     const skillsLearn = parseDataList(card.dataset.skillsLearn || '');
-    const kudosReasons = parseDataList(card.dataset.kudosReasons || '');
+    const kudosReasons = parseKudosReason(card.dataset.kudosReasons || '');
 
     document.getElementById('profile-modal-name').textContent = name;
     document.getElementById('profile-modal-email').textContent = email ? `📧 ${email}` : '';
