@@ -13,10 +13,7 @@ function generateDiceBearUrl(email = '') {
 
 function parseDataList(value) {
     if (!value) return [];
-    if (value.includes('||')) {
-        return value.split('||').map((item) => item.trim()).filter(Boolean);
-    }
-    return value.split(/[,/]/).map((item) => item.trim()).filter(Boolean);
+    return [value.trim()].filter(Boolean);
 }
 
 function renderOfferSkillBadges(container, items) {
