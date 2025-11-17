@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.conf import settings
 from datetime import timedelta
 import json
 from .services import get_all_rows
@@ -110,6 +111,12 @@ def give_kudos(request):
     if not from_email or not to_email:
       return JsonResponse({'error': 'Both from_email and to_email are required'}, status=400)
     
+    # Check if sender email is in the allowed whitelist
+    allowed_givers = getattr(settings, 'ALLOWED_KUDOS_GIVERS', [])
+    if allowed_givers and from_email not in allowed_givers:
+      return JsonResponse({
+        'error': 'You are not authorized to give kudos. Only emails who filled the ELO2 Peer Support form are allowed'
+      }, status=403)
     if from_email == to_email:
       return JsonResponse({'error': 'Cannot give kudos to yourself'}, status=400)
     
