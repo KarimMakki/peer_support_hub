@@ -135,3 +135,43 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 GSPREAD_CLIENT = initialize_gspread()
+
+# Allowed emails that can give kudos
+ALLOWED_KUDOS_GIVERS = [
+    # Add allowed email addresses here (lowercase)
+    # Example: 'user@example.com',
+    # 'another@example.com',
+    'kmakki48@gmail.com',
+    'gaisamuel34@gmail.com',
+    'spizhov22y@gmail.com',
+    'omniaagabani99@gmail.com',
+    'chrismylp1@gmail.com',
+    'dadi29skl@gmail.com',
+    'hibayassir21@gmail.com',
+    'alemayehu8363@gmail.com',
+    'ireosama1@gmail.com',
+    'hasan.zamzam@gmail.com',
+    'raneem.ram06@gmail.com',
+    'sh.shadab1988@gmail.com',
+    'robmilthon24@gmail.com',
+    'mnageeb153@gmail.com',
+    'obey19955@gmail.com',
+    'zaidmazenaltahhan@gmail.com',
+    'elochukwuodoeze@gmail.com',
+    'hodamalik622@gmail.com',
+    'sskalender@gmail.com',
+    'isaackibwe646@gmail.com',
+    'ramon.colmenaresblanco@gmail.com',
+    'bussiness.hn24@outlook.com',
+    'rafaa202@outlook.com',
+    'mohd.maky@gmail.com',
+    'muhammadshahroz1019@gmail.com',
+    'mohamedaltayeb2001@gmail.com',
+    'abdulqaderdost@yahoo.com',
+    'majdadelalsoud@gmail.com',
+    'mervilpierrekenley07@gmail.com',
+    'vahablotfi1@gmail.com',
+    'maythant3807@gmail.com',
+    'safiya.hash@gmail.com',
+    'ava.abdullaah@gmail.com',
+]
