@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta
 import json
-from .services import get_all_rows
+from .services import get_all_rows, append_row
 from .models import KudosLog, KudosView
 import re
 # Create your views here.
@@ -202,3 +202,44 @@ def resources_directory(request):
       resources.append(processed_resource)
     
     return render(request, 'resources_directory.html', {'resources': resources})
+
+
+@csrf_exempt
+def submit_resource_for_review(request):
+  """
+  API endpoint to submit a study resource suggestion.
+  Appends a row to the "Study Resources To Review" Google Sheet.
+  """
+  if request.method != 'POST':
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+  try:
+    data = json.loads(request.body)
+    title = (data.get('title') or '').strip()
+    author = (data.get('author') or '').strip()
+    description = (data.get('description') or '').strip()
+    link = (data.get('link') or '').strip()
+    language = (data.get('language') or '').strip()
+
+    if not title and not link:
+      return JsonResponse({'error': 'Provide at least a title or link'}, status=400)
+
+    if link and not re.match(r'^https?://', link):
+      return JsonResponse({'error': 'Link must start with http:// or https://'}, status=400)
+
+    row = [
+      title,
+      author,
+      description,
+      link,
+      language,
+    ]
+
+    append_row("Study Resources To Review", row)
+
+    return JsonResponse({'success': True})
+
+  except json.JSONDecodeError:
+    return JsonResponse({'error': 'Invalid JSON'}, status=400)
+  except Exception as e:
+    return JsonResponse({'error': str(e)}, status=500)

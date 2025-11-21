@@ -32,6 +32,14 @@ def get_all_rows(doc_name: str, sheet_name: str = None) -> List[dict]:
     Fetches all rows from a given Google Sheet worksheet.
     """
     sh = settings.GSPREAD_CLIENT.open(doc_name)
-    worksheet = sh.worksheet[sheet_name] if sheet_name else sh.get_worksheet(0)
+    worksheet = sh.worksheet(sheet_name) if sheet_name else sh.get_worksheet(0)
     return worksheet.get_all_records()
+
+def append_row(doc_name: str, row_values: List[str], sheet_name: str = None, value_input_option: str = 'USER_ENTERED') -> None:
+    """
+    Append a row to the specified Google Sheet worksheet.
+    """
+    sh = settings.GSPREAD_CLIENT.open(doc_name)
+    worksheet = sh.worksheet(sheet_name) if sheet_name else sh.get_worksheet(0)
+    worksheet.append_row(row_values, value_input_option=value_input_option)
     
