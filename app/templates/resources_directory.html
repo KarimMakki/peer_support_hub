@@ -54,7 +54,16 @@
 
         <!-- Search and Filter Controls -->
         <div class="mb-10 p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
-            <p class="text-lg text-gray-700 font-medium mb-4">Find resources:</p>
+            <div class="flex items-center justify-between mb-4">
+                <p class="text-lg text-gray-700 font-medium">Find resources:</p>
+                <button type="button" id="open-suggest-modal"
+                    class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl text-white bg-green-600 hover:bg-green-700 shadow-md transition duration-150">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add a Resource
+                </button>
+            </div>
             <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                 <input type="text" id="searchInput" onkeyup="filterResources()"
                     placeholder="Search by title, author, description, or language (e.g., Python, JavaScript)"
@@ -150,6 +159,52 @@
         </div>
 
     </main>
+
+    <!-- Suggest Resource Modal -->
+    <div id="suggest-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-20" aria-hidden="true">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Suggest a Study Resource</h3>
+                <button type="button" id="close-suggest-modal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="suggest-form" class="space-y-4">
+                <div>
+                    <label for="sr-title" class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                    <input type="text" id="sr-title" placeholder="Resource title"
+                        class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                </div>
+                <div>
+                    <label for="sr-author" class="block text-sm font-medium text-gray-700 mb-1">Author(s)</label>
+                    <input type="text" id="sr-author" placeholder="Author names"
+                        class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                </div>
+                <div>
+                    <label for="sr-link" class="block text-sm font-medium text-gray-700 mb-1">Link(s)</label>
+                    <input type="url" id="sr-link" placeholder="https://example.com"
+                        class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                </div>
+                <div>
+                    <label for="sr-description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="sr-description" rows="3" placeholder="What is this resource about?"
+                        class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 resize-none"></textarea>
+                </div>
+                <div>
+                    <label for="sr-language" class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                    <input type="text" id="sr-language" placeholder="e.g., English, Arabic"
+                        class="w-full p-3 border border-gray-300 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-suggest" class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition duration-150">Cancel</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition duration-150">Submit</button>
+                </div>
+                <p id="suggest-message" class="mt-2 p-3 rounded-lg text-sm font-semibold hidden"></p>
+            </form>
+        </div>
+    </div>
 
     <script src="{% static 'js/resources.js' %}"></script>
 </body>
